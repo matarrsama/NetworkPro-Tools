@@ -1,0 +1,88 @@
+{
+  "name": "network-pro-tools",
+  "version": "1.0.0",
+  "description": "Comprehensive networking utilities for professionals - IP tools, DNS, diagnostics, packet analysis",
+  "main": "dist/main.js",
+  "homepage": "./",
+  "author": "Matarr Sama",
+  "license": "MIT",
+  "scripts": {
+    "start": "npm run build && electron dist/main.js",
+    "dev": "webpack --mode development && electron dist/main.js --dev",
+    "build": "webpack --mode production && tsc",
+    "watch": "webpack --watch --mode development",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "electron-updater": "^6.6.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.8.1",
+    "electron": "^31.0.0",
+    "electron-builder": "^24.9.1",
+    "html-webpack-plugin": "^5.6.0",
+    "style-loader": "^3.3.3",
+    "ts-loader": "^9.5.0",
+    "typescript": "^5.0.0",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.0"
+  },
+  "build": {
+    "appId": "com.networkprotools.app",
+    "productName": "NetworkPro Tools",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "matarrsama",
+        "repo": "NetworkPro-Tools"
+      }
+    ],
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*",
+      "public/**/*"
+    ],
+    "directories": {
+      "buildResources": "public"
+    },
+    "win": {
+      "icon": "public/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "certificateFile": null,
+      "certificatePassword": null,
+      "signingHashAlgorithms": [
+        "sha256"
+      ],
+      "sign": null
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "NetworkPro Tools"
+    }
+  }
+}
