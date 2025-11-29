@@ -90,6 +90,8 @@ function App() {
 const UpdateListener: React.FC = () => {
   const { addToast } = useToasts();
   const [downloaded, setDownloaded] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [progress, setProgress] = useState<number>(0);
 
   useEffect(() => {
     const api = (window as any).electronAPI;
