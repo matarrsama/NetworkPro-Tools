@@ -1,6 +1,6 @@
 {
   "name": "network-pro-tools",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Comprehensive networking utilities for professionals - IP tools, DNS, diagnostics, packet analysis",
   "main": "dist/main.js",
   "homepage": "./",
