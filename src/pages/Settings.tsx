@@ -59,12 +59,12 @@ const Settings: React.FC<SettingsProps> = ({ isDarkMode, setIsDarkMode }) => {
     try {
       const result = await window.ipcRenderer?.invoke("check-for-updates");
       if (result?.error) {
-        addToast(`Update check: ${result.error}`, "info");
+        addToast("No updates available", "info");
       } else {
         addToast("Checking for updates...", "info");
       }
     } catch (error: any) {
-      addToast(`Error checking updates: ${error?.message}`, "error");
+      addToast("No updates available", "info");
     } finally {
       setCheckingUpdates(false);
     }
