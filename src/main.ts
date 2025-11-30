@@ -4,30 +4,16 @@ import { autoUpdater } from "electron-updater";
 import { setupIPCHandlers } from "./ipc-handlers";
 
 const isDev = process.env.NODE_ENV === "development";
-
 let mainWindow: BrowserWindow | null = null;
 
-const createWindow = () => {
-  mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 900,
-    minWidth: 1000,
-    minHeight: 700,
-    webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
-      nodeIntegration: false,
-      contextIsolation: true,
-    },
-    icon: path.join(__dirname, "../public/icon.ico"),
+// Configure auto-updater feed
+if (!isDev) {
+  autoUpdater.setFeedURL({
+    provider: "github",
+    owner: "matarrsama",
+    repo: "NetworkPro-Tools",
   });
-
-  const startUrl = `file://${path.join(__dirname, "../dist/index.html")}`;
-  mainWindow.loadURL(startUrl);
-
-  mainWindow.on("closed", () => {
-    mainWindow = null;
-  });
-};
+}
 
 // Auto-updater configuration
 autoUpdater.autoDownload = true;
@@ -64,7 +50,6 @@ autoUpdater.on("update-downloaded", () => {
     message: "A new version of NetworkPro Tools is ready to install.",
     detail: "The app will restart to install the update.",
   });
-
   if (choice === 0) {
     autoUpdater.quitAndInstall();
   }
@@ -72,10 +57,36 @@ autoUpdater.on("update-downloaded", () => {
 
 autoUpdater.on("error", (error) => {
   console.error("Auto-updater error:", error);
+  if (mainWindow) {
+    mainWindow.webContents.send("update-error", error.message);
+  }
 });
+
+const createWindow = () => {
+  mainWindow = new BrowserWindow({
+    width: 1400,
+    height: 900,
+    minWidth: 1000,
+    minHeight: 700,
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      nodeIntegration: false,
+      contextIsolation: true,
+    },
+    icon: path.join(__dirname, "../public/icon.ico"),
+  });
+
+  const startUrl = `file://${path.join(__dirname, "../dist/index.html")}`;
+  mainWindow.loadURL(startUrl);
+
+  mainWindow.on("closed", () => {
+    mainWindow = null;
+  });
+};
 
 app.on("ready", () => {
   setupIPCHandlers();
+
   // Register IPC handlers for update controls
   ipcMain.handle("check-for-updates", async () => {
     try {
@@ -96,12 +107,16 @@ app.on("ready", () => {
       return { error: err?.message || String(err) };
     }
   });
+
   createWindow();
   Menu.setApplicationMenu(null);
 
-  // Check for updates after app is ready
+  // Check for updates after app is ready (with a small delay to let window load)
   if (!isDev) {
-    autoUpdater.checkForUpdatesAndNotify();
+    setTimeout(() => {
+      console.log("Checking for updates...");
+      autoUpdater.checkForUpdatesAndNotify();
+    }, 3000);
   }
 });
 
